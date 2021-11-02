@@ -1,5 +1,8 @@
 import random
+from monster import Monster
 from art import logo
+
+werewolf = Monster()
 
 
 def game_over():
@@ -40,30 +43,8 @@ sword_below_avg = ["Your technique is off and your enthusiasm is pitiful.",
 sword_miss = ["Your father raised a disgrace.",
               "Your blade whistles in the air.",
               "Nothing happens.",
-              "You're a monke with a stick."]
-werewolf_crit = ["[CRITICAL]\nThe beast is an apex predator, you will not escape.",
-                 "[CRITICAL]\nThe werewolf shreds whats left of your torso and will to live.",
-                 "[CRITICAL]\nThe creature lunges and sinks its teeth into your arm, if you surive you will suffer "
-                 "for the rest of your life"]
-werewolf_above_avg = ["The creature strikes a hinge joint and decimates the cartilage beneath.",
-                      "The werewolf barrels into you with enough force that it sends you flying to the edge of the "
-                      "clearing.",
-                      "The werewolf roars, its reverberating decibal level increases the cortisol production in your "
-                      "body."]
-werewolf_avg = ["The werewolf clubs your body with its meaty paws.",
-                "The creature drop kicks you with its powerful hindquarters.",
-                "The creature slashes your body leaving streaks of dark red behind."]
-werewolf_below_avg = ["The creature's claws glance off your shoulder.",
-                      "The werewolf hits you square in the chest, but your adrenaline postpones the pain.",
-                      "The beast slashes a part of your body with no blood in it. How peculiar..."]
-werewolf_miss = [
-    "The werewolf scratches your arm enough to make the skin red, but not enough to draw blood. Still hurts...",
-    "The werewolf attempts to clobber you, but instead it hits you with the back of its hand",
-    "The beast swipes at you but instead hits your sword. You manage to hold on but the force crawls up your arm instead."]
-werewolf_death = [
-    "The werewolf crumples to the ground and shudders. It yips and growls as it struggles to move.\nAfter a couple minutes the creature slows down until all you can see is its body heave with every breath.",
-    "The beast struggles to stay standing on its hind legs. It whines as it takes one labored step after another.\nThe creature glances at you with something akin to sadness.",
-    "The creature falls on its forelimbs and stares up at the night sky.\nIt howls softly at the moon as if afraid to wake the slumbering forest."]
+              "You're a monkey with a stick."]
+
 evade_succ = ["You pivot around the lumbering werewolf to open space.",
               "You successfully bought yourself some time.",
               "You dash away from the beast."]
@@ -97,12 +78,6 @@ throw_sword_below_avg = ["You fling the sword at the werewolf with the power of 
 throw_sword_miss = ["You throw your sword with enough power to split a tree, too bad it flies directly over the beast",
                     "You wind back to throw your sword but let go to early. Instead of the sword hitting the werewolf it falls behind you.",
                     "Millions of years of evolution gave humans the dexterity and precision to throw things with accuracy. You are the exception to evolution."]
-werewolf_slay_loot = ["[ITEM] Monstrous Hide", "[ITEM] Savage Canines", "[ITEM] Thick Claws"]
-werewolf_slay_special_loot = ["[SECRET ITEM] Pungent Feces (Common)", "[SECRET ITEM] Nocturnal Eyes (Rare)",
-                              "[SECRET ITEM] Vial of Pure Blood (Legendary)"]
-werewolf_mercy_loot = ["[ITEM] Golden Sword"]
-werewolf_mercy_special_loot = ["[SECRET ITEM] Lightly Used Fleshlight (Common)", "[SECRET ITEM] Imbued Iron Bar (Rare)",
-                               "[SECRET ITEM] Brilliant Sapphire (Legendary)"]
 
 
 def rand_int():
@@ -120,11 +95,6 @@ def rand_int_throw_sword():
     return random.randint(15, 25)
 
 
-def rand_int_werewolf_attack():
-    import random
-    return random.randint(10, 25)
-
-
 def mercy():
     print("Your hand trembles as you stand before the werwolf, but you stand still and watch.")
     print("Hours pass as you stand vigilant. Finally, the rays of the sun peak over the horizon.")
@@ -136,8 +106,8 @@ def mercy():
     print("'Here, take this.'")
     print(
         "Adolphus stumbles toward the forgotten boxes slung near a tree and picked them up. Adolphus murmered a few words before he reaches elbow-deep into the small bag.")
-    print(werewolf_mercy_loot)
-    print(random.choice(werewolf_mercy_special_loot))
+    print(werewolf.mercy_loot)
+    print(random.choice(werewolf.special_mercy_loot))
     print("As you pick up the golden sword, a jolt of electricity runs through you.")
     print(
         "'That's a gold-copper alloy, gives you the higher tensile strength of the copper, but the magical properties of the sword. Use it well'")
@@ -151,8 +121,8 @@ def slay():
     print("You kick the werewolf over before plunging your sword hilt-deep into the belly of the beast.")
     print("A mighty roar rattles your bones before the creature's heart beats for the last time.")
     print("You plunder the beast for its valuables.")
-    print(werewolf_slay_loot)
-    print(random.choice(werewolf_slay_special_loot))
+    print(werewolf.slay_loot)
+    print(random.choice(werewolf.special_slay_loot))
     print("You sling the hide over your body and head to town.\nThe moon above shines upon you.")
     play_again()
 
@@ -168,130 +138,129 @@ def resolution():
 
 
 def attack_sword():
-    werewolf_health = 150
     user_health = 115
     bleed = 1
     while user_health > 0:
-        while werewolf_health > 0:
-            print("\nWerewolf Health: " + str(werewolf_health) + "/150")
+        while werewolf.health > 0:
+            print(f"Werewolf Health: {werewolf.health}/150")
             print("User Health: " + str(user_health) + "/115\n")
             attack = input("Attack with sword (ATTACK)\nEvade (EVADE)\n>").upper()
             if "ATTACK" in attack:
                 damage = rand_int()
-                damage2 = rand_int_werewolf_attack()
+                damage2 = werewolf.attack
                 if damage == 20:
                     print(random.choice(sword_crit))
                     damage = damage * 1.5
-                    werewolf_health = werewolf_health - damage
-                    werewolf_health = werewolf_health - bleed
+                    werewolf.health = werewolf.health - damage
+                    werewolf.health = werewolf.health - bleed
                     print("The werewolf took " + str(damage) + " damage and " + str(bleed) + " [BLEED] damage.")
                     bleed = bleed + 1
-                    if werewolf_health <= 0:
-                        print(random.choice(werewolf_death))
+                    if werewolf.health <= 0:
+                        print(random.choice(werewolf.death))
                         resolution()
                 elif 16 <= damage <= 19:
                     print(random.choice(sword_above_avg))
-                    werewolf_health = werewolf_health - damage
-                    werewolf_health = werewolf_health - bleed
+                    werewolf.health = werewolf.health - damage
+                    werewolf.health = werewolf.health - bleed
                     print("The werewolf took " + str(damage) + " damage and " + str(bleed) + " [BLEED] damage.")
                     bleed = bleed + 1
-                    if werewolf_health <= 0:
-                        print(random.choice(werewolf_death))
+                    if werewolf.health <= 0:
+                        print(random.choice(werewolf.death))
                         resolution()
                 elif 6 <= damage <= 15:
                     print(random.choice(sword_avg))
-                    werewolf_health = werewolf_health - damage
-                    werewolf_health = werewolf_health - bleed
+                    werewolf.health = werewolf.health - damage
+                    werewolf.health = werewolf.health - bleed
                     print("The werewolf took " + str(damage) + " damage and " + str(bleed) + " [BLEED] damage.")
                     bleed = bleed + 1
-                    if werewolf_health <= 0:
-                        print(random.choice(werewolf_death))
+                    if werewolf.health <= 0:
+                        print(random.choice(werewolf.death))
                         resolution()
                     else:
-                        damage2 = rand_int_werewolf_attack()
+                        damage2 = werewolf.attack
                         if damage2 == 25:
-                            print(random.choice(werewolf_crit))
+                            print(random.choice(werewolf.critical))
                             damage2 = damage2 * 1.5
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif 21 <= damage2 <= 24:
-                            print(random.choice(werewolf_above_avg))
+                            print(random.choice(werewolf.above_avg))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif 16 <= damage2 <= 20:
-                            print(random.choice(werewolf_avg))
+                            print(random.choice(werewolf.average))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif 11 <= damage2 <= 15:
-                            print(random.choice(werewolf_below_avg))
+                            print(random.choice(werewolf.below_average))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif damage2 == 10:
-                            print(random.choice(werewolf_miss))
+                            print(random.choice(werewolf.miss))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                 elif 1 <= damage <= 5:
                     print(random.choice(sword_below_avg))
-                    werewolf_health = werewolf_health - damage
-                    werewolf_health = werewolf_health - bleed
+                    werewolf.health = werewolf.health - damage
+                    werewolf.health = werewolf.health - bleed
                     print("The werewolf took " + str(damage) + " damage and " + str(bleed) + " [BLEED] damage.")
                     bleed = bleed + 1
-                    if werewolf_health <= 0:
-                        print(random.choice(werewolf_death))
+                    if werewolf.health <= 0:
+                        print(random.choice(werewolf.death))
                         resolution()
                     else:
-                        damage2 = rand_int_werewolf_attack()
+                        damage2 = werewolf.attack
                         if damage2 == 25:
-                            print(random.choice(werewolf_crit))
+                            print(random.choice(werewolf.critical))
                             damage2 = damage2 * 1.5
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif 21 <= damage2 <= 24:
-                            print(random.choice(werewolf_above_avg))
+                            print(random.choice(werewolf.above_avg))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif 16 <= damage2 <= 20:
-                            print(random.choice(werewolf_avg))
+                            print(random.choice(werewolf.average))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif 11 <= damage2 <= 15:
-                            print(random.choice(werewolf_below_avg))
+                            print(random.choice(werewolf.below_average))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif damage2 == 10:
-                            print(random.choice(werewolf_miss))
+                            print(random.choice(werewolf.miss))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                 elif damage == 0:
                     print(random.choice(sword_miss))
-                    werewolf_health = werewolf_health - damage
-                    werewolf_health = werewolf_health - bleed
+                    werewolf.health = werewolf.health - damage
+                    werewolf.health = werewolf.health - bleed
                     print("The werewolf took " + str(damage) + " damage and " + str(bleed) + " [BLEED] damage.")
                     bleed = bleed + 1
-                    if werewolf_health <= 0:
-                        print(random.choice(werewolf_death))
+                    if werewolf.health <= 0:
+                        print(random.choice(werewolf.death))
                         resolution()
                     else:
-                        damage2 = rand_int_werewolf_attack()
+                        damage2 = werewolf.attack()
                         if damage2 == 25:
-                            print(random.choice(werewolf_crit))
+                            print(random.choice(werewolf.critical))
                             damage2 = damage2 * 1.5
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif 21 <= damage2 <= 24:
-                            print(random.choice(werewolf_above_avg))
+                            print(random.choice(werewolf.above_avg))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif 16 <= damage2 <= 20:
-                            print(random.choice(werewolf_avg))
+                            print(random.choice(werewolf.average))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif 11 <= damage2 <= 15:
-                            print(random.choice(werewolf_below_avg))
+                            print(random.choice(werewolf.below_average))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                         elif damage2 == 10:
-                            print(random.choice(werewolf_miss))
+                            print(random.choice(werewolf.miss))
                             user_health = user_health - damage2
                             print("You take " + str(damage2) + " damage.")
                 if user_health <= 0:
@@ -300,7 +269,7 @@ def attack_sword():
             elif "EVADE" in attack:
                 evade = rand_int()
                 damage = rand_int()
-                damage2 = rand_int_werewolf_attack()
+                damage2 = werewolf.attack()
                 heavy_attack = rand_int_heavy_attack()
                 throw_sword = rand_int_throw_sword()
                 if evade >= 11:
@@ -313,153 +282,153 @@ def attack_sword():
                         if heavy_attack == 30:
                             print(random.choice(heavy_sword_crit))
                             heavy_attack = heavy_attack * 1.75
-                            werewolf_health = werewolf_health - heavy_attack
-                            werewolf_health = werewolf_health - bleed
+                            werewolf.health = werewolf.health - heavy_attack
+                            werewolf.health = werewolf.health - bleed
                             print("The werewolf took " + str(heavy_attack) + " damage and " + str(
                                 bleed) + " [BLEED] damage. ")
-                            if werewolf_health <= 0:
-                                print(random.choice(werewolf_death))
+                            if werewolf.health <= 0:
+                                print(random.choice(werewolf.death))
                                 resolution()
                         elif 27 <= heavy_attack <= 29:
                             print(random.choice(heavy_sword_above_avg))
                             heavy_attack = heavy_attack * 1.50
-                            werewolf_health = werewolf_health - heavy_attack
-                            werewolf_health = werewolf_health - bleed
+                            werewolf.health = werewolf.health - heavy_attack
+                            werewolf.health = werewolf.health - bleed
                             print("The werewolf took " + str(heavy_attack) + " damage and " + str(
                                 bleed) + " [BLEED] damage. ")
-                            if werewolf_health <= 0:
-                                print(random.choice(werewolf_death))
+                            if werewolf.health <= 0:
+                                print(random.choice(werewolf.death))
                                 resolution()
                         elif 16 <= heavy_attack <= 26:
                             print(random.choice(heavy_sword_avg))
                             heavy_attack = heavy_attack * 1.50
-                            werewolf_health = werewolf_health - heavy_attack
-                            werewolf_health = werewolf_health - bleed
+                            werewolf.health = werewolf.health - heavy_attack
+                            werewolf.health = werewolf.health - bleed
                             print("The werewolf took " + str(heavy_attack) + " damage and " + str(
                                 bleed) + " [BLEED] damage. ")
-                            if werewolf_health <= 0:
-                                print(random.choice(werewolf_death))
+                            if werewolf.health <= 0:
+                                print(random.choice(werewolf.death))
                                 resolution()
                         elif 11 <= heavy_attack <= 15:
                             print(random.choice(heavy_sword_below_avg))
                             heavy_attack = heavy_attack * 1.50
-                            werewolf_health = werewolf_health - heavy_attack
-                            werewolf_health = werewolf_health - bleed
+                            werewolf.health = werewolf.health - heavy_attack
+                            werewolf.health = werewolf.health - bleed
                             print("The werewolf took " + str(heavy_attack) + " damage and " + str(
                                 bleed) + " [BLEED] damage. ")
-                            if werewolf_health <= 0:
-                                print(random.choice(werewolf_death))
+                            if werewolf.health <= 0:
+                                print(random.choice(werewolf.death))
                                 resolution()
                         elif heavy_attack == 10:
                             print(random.choice(heavy_sword_below_avg))
                             heavy_attack = heavy_attack * 1.50
-                            werewolf_health = werewolf_health - heavy_attack
-                            werewolf_health = werewolf_health - bleed
+                            werewolf.health = werewolf.health - heavy_attack
+                            werewolf.health = werewolf.health - bleed
                             print("The werewolf took " + str(heavy_attack) + " damage and " + str(
                                 bleed) + " [BLEED] damage. ")
-                            if werewolf_health <= 0:
-                                print(random.choice(werewolf_death))
+                            if werewolf.health <= 0:
+                                print(random.choice(werewolf.death))
                                 resolution()
                     else:
                         if evade >= 6:
                             if throw_sword == 25:
                                 print(random.choice(throw_sword_crit))
                                 throw_sword = throw_sword * 1.50
-                                werewolf_health = werewolf_health - throw_sword
-                                werewolf_health = werewolf_health - bleed
+                                werewolf.health = werewolf.health - throw_sword
+                                werewolf.health = werewolf.health - bleed
                                 print("The werewolf took " + str(throw_sword) + " damage and " + str(
                                     bleed) + " [BLEED] damage")
                                 bleed = bleed + 3
-                                if werewolf_health <= 0:
-                                    print(random.choice(werewolf_death))
+                                if werewolf.health <= 0:
+                                    print(random.choice(werewolf.death))
                                     print(achievement)
                                     resolution()
                             elif 21 <= throw_sword <= 24:
                                 print(random.choice(throw_sword_above_avg))
-                                werewolf_health = werewolf_health - throw_sword
-                                werewolf_health = werewolf_health - bleed
+                                werewolf.health = werewolf.health - throw_sword
+                                werewolf.health = werewolf.health - bleed
                                 print("The werewolf took " + str(throw_sword) + " damage and " + str(
                                     bleed) + " [BLEED] damage")
                                 bleed = bleed + 3
-                                if werewolf_health <= 0:
-                                    print(random.choice(werewolf_death))
+                                if werewolf.health <= 0:
+                                    print(random.choice(werewolf.death))
                                     print(achievement)
                                     resolution()
                             elif 16 <= throw_sword <= 20:
                                 print(random.choice(throw_sword_avg))
-                                werewolf_health = werewolf_health - throw_sword
-                                werewolf_health = werewolf_health - bleed
+                                werewolf.health = werewolf.health - throw_sword
+                                werewolf.health = werewolf.health - bleed
                                 print("The werewolf took " + str(throw_sword) + " damage and " + str(
                                     bleed) + " [BLEED] damage")
                                 bleed = bleed + 3
-                                if werewolf_health <= 0:
-                                    print(random.choice(werewolf_death))
+                                if werewolf.health <= 0:
+                                    print(random.choice(werewolf.death))
                                     print(achievement)
                                     resolution()
                             elif throw_sword == 15:
                                 print(random.choice(throw_sword_below_avg))
-                                werewolf_health = werewolf_health - throw_sword
-                                werewolf_health = werewolf_health - bleed
+                                werewolf.health = werewolf.health - throw_sword
+                                werewolf.health = werewolf.health - bleed
                                 print("The werewolf took " + str(throw_sword) + " damage and " + str(
                                     bleed) + " [BLEED] damage")
                                 bleed = bleed + 3
-                                if werewolf_health <= 0:
-                                    print(random.choice(werewolf_death))
+                                if werewolf.health <= 0:
+                                    print(random.choice(werewolf.death))
                                     print(achievement)
                                     resolution()
                         else:
                             print(random.choice(throw_sword_miss))
-                            damage2 = rand_int_werewolf_attack()
+                            damage2 = werewolf.attack()
                             if damage2 == 25:
-                                print(random.choice(werewolf_crit))
+                                print(random.choice(werewolf.critical))
                                 damage2 = damage2 * 2
                                 user_health = user_health - damage2
                                 print("You take " + str(damage2) + " damage. ")
                             elif 21 <= damage2 <= 24:
-                                print(random.choice(werewolf_above_avg))
+                                print(random.choice(werewolf.above_avg))
                                 damage2 = damage2 * .75
                                 user_health = user_health - damage2
                                 print("You take " + str(damage2) + " damage. ")
                             elif 16 <= damage2 <= 20:
-                                print(random.choice(werewolf_avg))
+                                print(random.choice(werewolf.average))
                                 damage2 = damage2 * .75
                                 user_health = user_health - damage2
                                 print("You take " + str(damage2) + " damage. ")
                             elif 11 <= damage2 <= 15:
-                                print(random.choice(werewolf_below_avg))
+                                print(random.choice(werewolf.below_average))
                                 damage2 = damage2 * .55
                                 user_health = user_health - damage2
                                 print("You take " + str(damage2) + " damage. ")
                             elif damage2 == 10:
-                                print(random.choice(werewolf_miss))
+                                print(random.choice(werewolf.miss))
                                 damage2 = damage2 * .75
                                 user_health = user_health - damage2
                                 print("You take " + str(damage2) + " damage. ")
                 elif evade <= 10:
                     print(random.choice(evade_miss))
-                    damage2 = rand_int_werewolf_attack()
+                    damage2 = werewolf.attack()
                     if damage2 == 25:
-                        print(random.choice(werewolf_crit))
+                        print(random.choice(werewolf.critical))
                         damage2 = damage2 * 1.5
                         user_health = user_health - damage2
                         print("You take " + str(damage2) + " damage. ")
                     elif 21 <= damage2 <= 24:
-                        print(random.choice(werewolf_above_avg))
+                        print(random.choice(werewolf.critical))
                         damage2 = damage2 * .75
                         user_health = user_health - damage2
                         print("You take " + str(damage2) + " damage. ")
                     elif 16 <= damage2 <= 20:
-                        print(random.choice(werewolf_avg))
+                        print(random.choice(werewolf.average))
                         damage2 = damage2 * .75
                         user_health = user_health - damage2
                         print("You take " + str(damage2) + " damage. ")
                     elif 11 <= damage2 <= 15:
-                        print(random.choice(werewolf_below_avg))
+                        print(random.choice(werewolf.below_average))
                         damage2 = damage2 * .75
                         user_health = user_health - damage2
                         print("You take " + str(damage2) + " damage. ")
                     elif damage2 == 10:
-                        print(random.choice(werewolf_miss))
+                        print(random.choice(werewolf.miss))
                         damage2 = damage2 * .75
                         user_health = user_health - damage2
                         print("You take " + str(damage2) + " damage. ")
