@@ -5,6 +5,7 @@ class Monster:
     def __init__(self):
         self.attack = random.randint(10, 25)
         self.health = 150
+        self.bleed = 1
         self.critical = ["[CRITICAL]\nThe beast is an apex predator, you will not escape.",
                          "[CRITICAL]\nThe werewolf shreds whats left of your torso and will to live.",
                          "[CRITICAL]\nThe creature lunges and sinks its teeth into your arm, if you survive you "
@@ -52,4 +53,15 @@ class Monster:
                                    "[SECRET ITEM] Imbued Iron Bar (Rare)",
                                    "[SECRET ITEM] Brilliant Sapphire (Legendary)"]
 
+    def heavy_damage(self, damage):
+        self.health = self.health - damage
+        self.health = self.health - self.bleed
+        print(f"The werewolf took {damage} damage and {self.bleed} [BLEED] damage.")
 
+    def damage(self, damage):
+        self.heavy_damage(damage)
+        self.bleed = self.bleed + 1
+
+    def throw_damage(self, damage):
+        self.heavy_damage(damage)
+        self.bleed = self.bleed + 3
